@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>侦探 AI 小游戏 Demo 方案</title>
+  <style>
+    :root {
+      --paper: #f4efe6;
+      --paper-deep: #e7ddcd;
+      --ink: #201914;
+      --muted: #6f6257;
+      --line: #c9b9a4;
+      --black: #14100d;
+      --brown: #4c3325;
+      --red: #8f2e25;
+      --gold: #b48747;
+      --green: #35594b;
+      --card: rgba(255, 251, 242, 0.72);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--black);
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Georgia", "Times New Roman", "Microsoft YaHei", serif;
+      background:
+        linear-gradient(90deg, rgba(20, 16, 13, 0.92), rgba(20, 16, 13, 0.22) 18%, rgba(20, 16, 13, 0.12) 82%, rgba(20, 16, 13, 0.92)),
+        radial-gradient(circle at 22% 6%, rgba(180, 135, 71, 0.2), transparent 26rem),
+        var(--paper);
+      line-height: 1.72;
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      opacity: 0.35;
+      background-image:
+        linear-gradient(rgba(32, 25, 20, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(32, 25, 20, 0.035) 1px, transparent 1px);
+      background-size: 38px 38px;
+    }
+
+    .page {
+      position: relative;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 42px 28px 72px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+      gap: 32px;
+      align-items: end;
+      padding: 36px;
+      border: 1px solid rgba(76, 51, 37, 0.28);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(255, 251, 242, 0.88), rgba(231, 221, 205, 0.78)),
+        var(--card);
+      box-shadow: 0 24px 80px rgba(20, 16, 13, 0.22);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      width: max-content;
+      margin-bottom: 16px;
+      padding: 4px 10px;
+      border: 1px solid rgba(143, 46, 37, 0.35);
+      border-radius: 999px;
+      color: var(--red);
+      font-family: "Microsoft YaHei", sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      letter-spacing: 0;
+      line-height: 1.15;
+    }
+
+    h1 {
+      max-width: 760px;
+      font-size: clamp(36px, 7vw, 84px);
+      font-weight: 700;
+    }
+
+    h2 {
+      padding-top: 6px;
+      font-size: clamp(25px, 3vw, 39px);
+    }
+
+    h3 {
+      font-size: 20px;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .lead {
+      margin-top: 18px;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .meta {
+      display: grid;
+      gap: 10px;
+      color: var(--muted);
+      font-family: "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+    }
+
+    .meta strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    section {
+      margin-top: 28px;
+      padding: 30px;
+      border: 1px solid rgba(76, 51, 37, 0.22);
+      border-radius: 8px;
+      background: rgba(255, 251, 242, 0.7);
+      box-shadow: 0 18px 56px rgba(20, 16, 13, 0.12);
+    }
+
+    .section-head {
+      display: flex;
+      gap: 14px;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 16px;
+    }
+
+    .section-number {
+      color: var(--red);
+      font-family: "Microsoft YaHei", sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      min-width: 0;
+      padding: 18px;
+      border: 1px solid rgba(76, 51, 37, 0.22);
+      border-radius: 8px;
+      background: rgba(244, 239, 230, 0.78);
+    }
+
+    .card h3 {
+      margin-bottom: 8px;
+      color: var(--brown);
+    }
+
+    .card p,
+    li,
+    td,
+    th {
+      color: var(--muted);
+      font-family: "Microsoft YaHei", sans-serif;
+      font-size: 15px;
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+
+    li + li {
+      margin-top: 7px;
+    }
+
+    .loop {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .loop-step {
+      min-height: 150px;
+      padding: 14px;
+      border: 1px solid rgba(53, 89, 75, 0.28);
+      border-radius: 8px;
+      background: rgba(235, 229, 217, 0.86);
+    }
+
+    .loop-step b {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--green);
+      font-size: 15px;
+    }
+
+    .desk {
+      display: grid;
+      grid-template-columns: 1fr 1.35fr 1fr;
+      gap: 12px;
+    }
+
+    .desk .card {
+      min-height: 230px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(244, 239, 230, 0.66);
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      border-bottom: 1px solid rgba(201, 185, 164, 0.72);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    th {
+      color: var(--brown);
+      font-weight: 700;
+      background: rgba(231, 221, 205, 0.7);
+    }
+
+    .quote {
+      padding: 18px;
+      border-left: 4px solid var(--red);
+      border-radius: 6px;
+      background: rgba(231, 221, 205, 0.7);
+      color: var(--brown);
+      font-size: 18px;
+      font-style: italic;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      padding: 5px 9px;
+      border: 1px solid rgba(76, 51, 37, 0.24);
+      border-radius: 999px;
+      color: var(--brown);
+      background: rgba(255, 251, 242, 0.68);
+      font-family: "Microsoft YaHei", sans-serif;
+      font-size: 13px;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 15px 16px;
+      border: 1px dashed rgba(143, 46, 37, 0.42);
+      border-radius: 8px;
+      background: rgba(143, 46, 37, 0.06);
+      color: var(--muted);
+      font-family: "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+    }
+
+    footer {
+      margin-top: 26px;
+      color: rgba(244, 239, 230, 0.72);
+      font-family: "Microsoft YaHei", sans-serif;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      header,
+      .grid,
+      .two-col,
+      .loop,
+      .desk {
+        grid-template-columns: 1fr;
+      }
+
+      .page {
+        padding: 20px 14px 48px;
+      }
+
+      header,
+      section {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <span class="eyebrow">Private Gameplay Demo · Detective AI</span>
+        <h1>侦探 AI 小游戏 Demo 方案</h1>
+        <p class="lead">
+          一个以证据板为核心的本地私用玩法验证：玩家阅读案件资料、操作图像线索、向 AI 搭档提交推理，
+          在被追问和修正的过程中一步一步接近真相。
+        </p>
+      </div>
+      <div class="meta">
+        <p><strong>方案日期：</strong>2026-05-12</p>
+        <p><strong>内容来源：</strong>以小说第一章的案件结构作为 demo 素材。</p>
+        <p><strong>目标形态：</strong>完整小型破案流程，而非最终商业版本。</p>
+        <p><strong>重要边界：</strong>仅用于本地内部玩法验证；若公开展示，需要替换为原创故事、角色与图像资产。</p>
+      </div>
+    </header>
+
+    <section>
+      <div class="section-head">
+        <h2>项目定位</h2>
+        <span class="section-number">01</span>
+      </div>
+      <div class="two-col">
+        <div>
+          <p>
+            这个 demo 的核心不是让玩家“问 AI 要答案”，而是让 AI 成为一个克制、敏锐、不会抢戏的推理搭档。
+            玩家必须自己阅读、观察、提出假设、动手验证，再把推理链讲给 AI 听。AI 的价值体现在追问、反驳、
+            检查证据缺口，以及在玩家卡住时给出有限度提示。
+          </p>
+          <p style="margin-top: 12px;">
+            方案采用证据板推理型结构：左侧承载博客资料和时间线，中间承载五张图的旋转、缩放、叠加操作，
+            右侧承载 AI 搭档对话与阶段性推理验证。
+          </p>
+          <p style="margin-top: 12px;">
+            AI 搭档在叙事上不应只是一个抽象聊天框，而应被包装成一个具体的人物，例如侦探助手、调查实习生、
+            档案分析员或玩家的远程协查伙伴。当前 demo 只需要这个单一助手角色；多名 AI NPC 对话可以作为后续扩展，
+            不进入本次玩法验证范围。
+          </p>
+        </div>
+        <div class="quote">
+          核心体验：玩家感觉“是我想出来的”，AI 只是让我的推理更清楚、更严谨、更难逃避漏洞。
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>体验支柱</h2>
+        <span class="section-number">02</span>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <h3>AI 搭档推理感</h3>
+          <p>AI 不直接揭示谜底，而是根据玩家已解锁证据进行追问、质疑和验证。它像推理陪审员，也像侦探搭档。</p>
+        </article>
+        <article class="card">
+          <h3>图像线索操作感</h3>
+          <p>玩家通过旋转、缩放、对齐编号、调整透明度和叠加图层，亲手发现隐藏图像，而不是只读文字说明。</p>
+        </article>
+        <article class="card">
+          <h3>案件资料阅读感</h3>
+          <p>博客、时间线、摘录和备注被拆成资料卡。玩家像查案一样标注疑点、整理证据，而不是被迫读长文本。</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>核心循环</h2>
+        <span class="section-number">03</span>
+      </div>
+      <div class="loop">
+        <div class="loop-step">
+          <b>1. 读取资料</b>
+          <p>浏览博客摘录、时间线、最后留言和图片信息。</p>
+        </div>
+        <div class="loop-step">
+          <b>2. 标记疑点</b>
+          <p>把异常日期、语气、数量、人物关系和图像编号加入待解释清单。</p>
+        </div>
+        <div class="loop-step">
+          <b>3. 提出假设</b>
+          <p>用自己的话告诉 AI：“我认为 X，因为证据 A 和 B。”</p>
+        </div>
+        <div class="loop-step">
+          <b>4. 动手验证</b>
+          <p>在图像工作台中旋转、缩放、叠加，确认或推翻假设。</p>
+        </div>
+        <div class="loop-step">
+          <b>5. 修正报告</b>
+          <p>AI 指出漏洞，玩家回到证据板补足推理链，直到进入下一阶段。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>功能模块</h2>
+        <span class="section-number">04</span>
+      </div>
+      <div class="desk">
+        <article class="card">
+          <h3>案件资料区</h3>
+          <p>放置博客摘录、自动时间线、关键留言、已发现疑点和玩家备注。资料按阶段解锁，避免一次性信息过载。</p>
+          <div class="pill-list">
+            <span class="pill">博客摘录</span>
+            <span class="pill">时间线</span>
+            <span class="pill">可疑标注</span>
+            <span class="pill">证据收藏</span>
+          </div>
+        </article>
+        <article class="card">
+          <h3>图像工作台</h3>
+          <p>放置五张图像证物。玩家可以拖拽、旋转、缩放、调整透明度、改变图层顺序，并以编号作为对齐点进行组合。</p>
+          <div class="pill-list">
+            <span class="pill">旋转</span>
+            <span class="pill">缩放</span>
+            <span class="pill">透明度</span>
+            <span class="pill">图层顺序</span>
+            <span class="pill">编号对齐</span>
+          </div>
+        </article>
+        <article class="card">
+          <h3>AI 搭档区</h3>
+          <p>承载自由对话、快捷提问、阶段推理提交和 AI 反馈。AI 以“助手型人物”的身份出现，提示严格受玩家当前进度限制。</p>
+          <div class="pill-list">
+            <span class="pill">助手人设</span>
+            <span class="pill">追问</span>
+            <span class="pill">提示</span>
+            <span class="pill">反驳</span>
+            <span class="pill">推理验证</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>章节流程</h2>
+        <span class="section-number">05</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>阶段</th>
+            <th>玩家目标</th>
+            <th>关键推理门槛</th>
+            <th>AI 作用</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>异常入口</td>
+            <td>阅读最后留言和博客基本信息，意识到停更并不普通。</td>
+            <td>指出留言中的异常对象、异常语气和“三张图”指向。</td>
+            <td>追问玩家为什么认为这不是普通告别。</td>
+          </tr>
+          <tr>
+            <td>资料重建</td>
+            <td>通过精简时间线理解婚姻、怀孕、图像发布、死亡公告和多年空白。</td>
+            <td>标出至少两个异常点，例如时间断裂、危险生产安排、第三人影子、三张与五张的矛盾。</td>
+            <td>要求玩家把疑点和证据对应起来，避免空泛猜测。</td>
+          </tr>
+          <tr>
+            <td>图像实验</td>
+            <td>尝试按年龄、日期或编号理解五张图，发现普通排序无法解释全部信息。</td>
+            <td>意识到编号可能不是年龄顺序，而是图层顺序或定位信息。</td>
+            <td>提示玩家比较编号位置和图像比例，但不直接说出叠图答案。</td>
+          </tr>
+          <tr>
+            <td>核心发现</td>
+            <td>通过对齐、缩放和叠加前三张图，发现隐藏画面。</td>
+            <td>提交“图像机制 + 死亡相关推断 + 最后留言含义”的完整解释。</td>
+            <td>验证推理链是否覆盖机制、证据和情绪对象。</td>
+          </tr>
+          <tr>
+            <td>第二层反转</td>
+            <td>回头解释剩余两张图，发现案件不只有恐怖真相，也有另一层未来想象。</td>
+            <td>说明为什么 4/5 不能被忽略，以及它们如何改变最终报告的情绪判断。</td>
+            <td>逼玩家补全遗漏证据，让结论从“破案”变成“理解全部图像”。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>AI 搭档规则</h2>
+        <span class="section-number">06</span>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <h3>追问层</h3>
+          <p>当玩家判断模糊时，AI 只问证据在哪里，例如“你说这条留言可疑，是语气、时间，还是它提到的图？”</p>
+        </article>
+        <article class="card">
+          <h3>角色身份</h3>
+          <p>AI 搭档需要有轻量人物设定：它可以是谨慎的调查助手、擅长整理资料的档案员，或负责反问玩家逻辑漏洞的协查员。</p>
+        </article>
+        <article class="card">
+          <h3>对照层</h3>
+          <p>当玩家卡住时，AI 引导比较资料，例如把最后留言、死亡公告和图像发布时间放在一起看。</p>
+        </article>
+        <article class="card">
+          <h3>操作层</h3>
+          <p>当玩家接近图像谜题时，AI 给非剧透操作建议，例如“把编号当成定位点试试”。</p>
+        </article>
+        <article class="card">
+          <h3>验证层</h3>
+          <p>玩家提交推理后，AI 检查是否解释了当前问题、是否引用证据、是否遗漏关键矛盾。</p>
+        </article>
+        <article class="card">
+          <h3>进度约束</h3>
+          <p>AI 只能讨论玩家已经解锁或已经观察到的信息。没有完成前三张图前，不主动点破剩余两张图。</p>
+        </article>
+        <article class="card">
+          <h3>语气边界</h3>
+          <p>反馈不用“错误”，而用“还不能解释”“缺少证据”“这个假设只覆盖了一部分”。</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>线索与交互</h2>
+        <span class="section-number">07</span>
+      </div>
+      <div class="two-col">
+        <article class="card">
+          <h3>资料卡</h3>
+          <ul>
+            <li>最后留言卡：引出停更、三张图和无法原谅的情绪。</li>
+            <li>时间线卡：按日期组织关键事件，不铺开完整原文。</li>
+            <li>矛盾卡：玩家主动标记异常，系统只记录，不立刻判断。</li>
+            <li>证据篮：玩家把资料拖入推理报告，作为 AI 验证依据。</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>图像卡</h3>
+          <ul>
+            <li>每张图保留编号、标题、发布时间和玩家备注。</li>
+            <li>工作台支持错误尝试，错误尝试会触发 AI 追问而不是惩罚。</li>
+            <li>关键操作是统一比例、对齐编号、调整层级和观察叠加结果。</li>
+            <li>前三张形成核心发现，后两张形成情绪反转。</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>胜利条件</h2>
+        <span class="section-number">08</span>
+      </div>
+      <p>
+        demo 的胜利条件不是选出凶手，而是完成一份可被 AI 接受的推理报告。报告需要覆盖最后留言的异常含义、
+        前三张图的隐藏机制、隐藏图像带来的死亡相关推断、剩余两张图的意义，以及仍无法确认的疑问。
+      </p>
+      <div class="note">
+        最终报告应该允许“不完全确定”。这个案件的体验重点不是给玩家一个封闭答案，而是让玩家意识到：
+        证据能够揭示某些真相，也会留下无法被完全证实的动机、罪与责任。
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>成功标准</h2>
+        <span class="section-number">09</span>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <h3>玩家主动解释</h3>
+          <p>测试中，玩家会主动把自己的想法告诉 AI，而不是只等 AI 给提示。</p>
+        </article>
+        <article class="card">
+          <h3>玩家回看证据</h3>
+          <p>AI 反问后，玩家会回到资料区或图像工作台补证据、改假设。</p>
+        </article>
+        <article class="card">
+          <h3>发现瞬间成立</h3>
+          <p>图像叠加的关键发现由玩家操作触发，而不是由 AI 文字直接告知。</p>
+        </article>
+        <article class="card">
+          <h3>错误假设可推进</h3>
+          <p>玩家的错误推理不会导致死路，而会变成 AI 引导下一步观察的材料。</p>
+        </article>
+        <article class="card">
+          <h3>情绪曲线完整</h3>
+          <p>玩家经历从普通记录、怪异疑点、恐怖发现，到补全后更复杂情绪的变化。</p>
+        </article>
+        <article class="card">
+          <h3>AI 不抢答案</h3>
+          <p>玩家完成后仍然觉得主要推理是自己完成的，AI 只是让过程更清晰。</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>风险与边界</h2>
+        <span class="section-number">10</span>
+      </div>
+      <div class="two-col">
+        <article class="card">
+          <h3>剧透风险</h3>
+          <p>AI 如果过早说出图像叠加、前三张和后两张的意义，会破坏玩家发现感。需要用进度状态限制提示内容。</p>
+        </article>
+        <article class="card">
+          <h3>阅读负担</h3>
+          <p>第一章信息量较大，demo 不应让玩家读完整文本。资料需要拆卡、摘要、阶段解锁。</p>
+        </article>
+        <article class="card">
+          <h3>图像操作难度</h3>
+          <p>如果自由操作过难，玩家会卡在工具使用上。可加入“半自动对齐编号”和“透明度预设”。</p>
+        </article>
+        <article class="card">
+          <h3>版权边界</h3>
+          <p>当前方案面向本地私用 demo。公开展示前，需要替换小说人物、文本、图像和具体案件表达。</p>
+        </article>
+        <article class="card">
+          <h3>NPC 范围</h3>
+          <p>当前 demo 只做单一 AI 助手，不加入嫌疑人、证人或其他 AI NPC。后续可以扩展，但不应干扰本轮核心玩法验证。</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>后续扩展</h2>
+        <span class="section-number">11</span>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <h3>章节制案件集</h3>
+          <p>每章围绕一种“奇怪媒介”展开，例如图像、录音、监控、日记或聊天记录。</p>
+        </article>
+        <article class="card">
+          <h3>AI 搭档成长</h3>
+          <p>记录玩家偏好的推理方式，让 AI 后续更会针对玩家的盲点追问。</p>
+        </article>
+        <article class="card">
+          <h3>AI NPC 对话</h3>
+          <p>后续章节可以加入 AI 加持的证人、嫌疑人或相关人物，让玩家通过盘问发现口供矛盾，但本 demo 暂不实现。</p>
+        </article>
+        <article class="card">
+          <h3>案件编辑器</h3>
+          <p>把资料卡、图像层、推理门槛和 AI 验证规则模板化，方便制作原创案件。</p>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      Detective AI Demo Design · Local private prototype plan · 2026-05-12
+    </footer>
+  </main>
+</body>
+</html>

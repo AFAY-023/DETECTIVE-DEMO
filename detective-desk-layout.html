@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>侦探 AI Demo 布局草图</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #171512;
+      --panel: #25211c;
+      --ink: #f3ece0;
+      --muted: #bcae9d;
+      --line: #4b4035;
+      --accent: #c9a15d;
+      --soft: #342d26;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, "Microsoft YaHei", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    main {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      letter-spacing: 0;
+    }
+
+    p {
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .subtitle {
+      margin: 0 0 22px;
+    }
+
+    .desk {
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) minmax(420px, 1.45fr) minmax(280px, 1fr);
+      gap: 14px;
+      min-height: 620px;
+    }
+
+    .panel {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .tag {
+      width: max-content;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #171512;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .item,
+    .thumb,
+    .canvas,
+    .bubble,
+    input {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--soft);
+      color: var(--ink);
+    }
+
+    .item {
+      min-height: 54px;
+      padding: 12px;
+    }
+
+    .timeline,
+    .chat {
+      display: grid;
+      gap: 8px;
+    }
+
+    .thumbs {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .thumb {
+      aspect-ratio: 3 / 4;
+      display: grid;
+      place-items: center;
+      border-style: dashed;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .canvas {
+      flex: 1;
+      min-height: 310px;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: linear-gradient(135deg, #2a251f, #1f1b17);
+      color: #d7c7b4;
+      text-align: center;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button {
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #3a3128;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .bubble {
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .bubble.ai {
+      border-left: 3px solid var(--accent);
+    }
+
+    input {
+      width: 100%;
+      min-height: 44px;
+      padding: 12px;
+      font: inherit;
+    }
+
+    @media (max-width: 980px) {
+      main {
+        padding: 18px;
+      }
+
+      .desk {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>侦探 AI Demo：证据板推理型</h1>
+    <p class="subtitle">低保真结构图：左侧查资料，中间动手验证图像假设，右侧和 AI 搭档答辩推理链。</p>
+
+    <section class="desk">
+      <aside class="panel">
+        <span class="tag">A 案件资料区</span>
+        <h2>博客与时间线</h2>
+        <p>玩家逐步解锁摘录，不直接阅读整章。</p>
+        <div class="timeline">
+          <div class="item">最后留言：停止更新、三张图的秘密、无法原谅的罪</div>
+          <div class="item">怀孕与生产时间线</div>
+          <div class="item">异常点：三年空白、蛋糕数量、神秘第三人</div>
+          <div class="item">已确认线索 / 待解释线索</div>
+        </div>
+      </aside>
+
+      <section class="panel">
+        <span class="tag">B 图像工作台</span>
+        <h2>旋转、缩放、叠加五张画</h2>
+        <p>玩家用编号对齐、透明度和图层顺序发现隐藏图像。</p>
+        <div class="thumbs">
+          <div class="thumb">1</div>
+          <div class="thumb">2</div>
+          <div class="thumb">3</div>
+          <div class="thumb">4</div>
+          <div class="thumb">5</div>
+        </div>
+        <div class="canvas">Layer Canvas / Light Table<br>编号对齐、缩放统一、图层叠放</div>
+        <div class="toolbar">
+          <button>旋转</button>
+          <button>缩放</button>
+          <button>对齐编号</button>
+          <button>调透明度</button>
+          <button>提交发现</button>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <span class="tag">C AI 搭档区</span>
+        <h2>追问与推理验证</h2>
+        <div class="chat">
+          <div class="bubble ai">你说最后留言是在责备某个人。哪条证据能支持这个判断？</div>
+          <div class="bubble ai">如果编号只是年龄顺序，为什么画面顺序不稳定？</div>
+          <div class="bubble ai">你已经解释了三张图。剩下两张图是否也该有功能？</div>
+        </div>
+        <input placeholder="输入你的假设，例如：我认为三张图应该叠起来……" />
+      </aside>
+    </section>
+  </main>
+</body>
+</html>

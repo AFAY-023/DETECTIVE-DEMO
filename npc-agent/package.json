@@ -1,0 +1,17 @@
+{
+  "name": "detective-npc-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Stateful NPC assistant core for the detective AI demo.",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "dev": "node scripts/dev-server.mjs",
+    "sample:guard": "node scripts/sample-guard.mjs",
+    "sample:prompt": "node scripts/sample-prompt.mjs"
+  },
+  "dependencies": {
+    "@flue/sdk": "latest"
+  },
+  "devDependencies": {}
+}
