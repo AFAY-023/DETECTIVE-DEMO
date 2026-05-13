@@ -11,7 +11,10 @@
     "sample:prompt": "node scripts/sample-prompt.mjs"
   },
   "dependencies": {
-    "@flue/sdk": "latest"
+    "@flue/sdk": "latest",
+    "valibot": "latest"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@flue/cli": "latest"
+  }
 }

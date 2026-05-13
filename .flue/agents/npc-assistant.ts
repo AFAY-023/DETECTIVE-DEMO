@@ -1,4 +1,5 @@
 import type { FlueContext } from "@flue/sdk/client";
+import * as v from "valibot";
 
 import {
   buildNpcPrompt,
@@ -8,6 +9,29 @@ import {
 
 export const triggers = { webhook: true };
 
+const npcResponseSchema = v.object({
+  npc: v.literal("澄"),
+  text: v.string(),
+  intent: v.picklist([
+    "ask_for_evidence",
+    "light_hint",
+    "challenge_theory",
+    "confirm_partial",
+    "suggest_next_observation",
+    "advance_stage_candidate",
+    "refuse_spoiler",
+  ]),
+  statePatch: v.object({
+    lastNpcIntent: v.optional(v.string()),
+    suggestedNextStage: v.optional(v.string()),
+    reason: v.optional(v.string()),
+  }),
+  safety: v.object({
+    spoilerRisk: v.picklist(["low", "medium", "high"]),
+    blockedTopic: v.nullable(v.string()),
+  }),
+});
+
 export default async function ({ init, payload, env }: FlueContext) {
   validatePayload(payload);
 
@@ -16,27 +40,28 @@ export default async function ({ init, payload, env }: FlueContext) {
 
   const harness = await init({ model: env.MODEL || "openai/gpt-5-mini" });
   const session = await harness.session();
-  const result = await session.prompt(prompt);
+  const result = await session.prompt(prompt, {
+    result: npcResponseSchema,
+  });
 
-  return parseNpcResponse(extractText(result), guard);
+  return normalizePromptResult(result, guard);
 }
 
-function extractText(result: unknown): string {
-  if (typeof result === "string") {
-    return result;
-  }
-
+function normalizePromptResult(result: unknown, guard: unknown) {
   if (result && typeof result === "object") {
     const value = result as Record<string, unknown>;
-    if (typeof value.text === "string") {
-      return value.text;
+    if (value.data && typeof value.data === "object") {
+      return parseNpcResponse(JSON.stringify(value.data), guard);
     }
-    if (typeof value.output === "string") {
-      return value.output;
+    if (value.result && typeof value.result === "object") {
+      return parseNpcResponse(JSON.stringify(value.result), guard);
+    }
+    if (typeof value.text === "string") {
+      return parseNpcResponse(value.text, guard);
     }
   }
 
-  return JSON.stringify(result);
+  return parseNpcResponse(JSON.stringify(result), guard);
 }
 
 function validatePayload(payload: unknown): asserts payload is {

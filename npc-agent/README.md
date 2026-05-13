@@ -72,4 +72,18 @@ The Flue webhook entry lives at:
 ../.flue/agents/npc-assistant.ts
 ```
 
-Run it with Flue after installing Flue dependencies for your environment. The core modules in `src/npc/` can be reused by a web server, Dify bridge, or DingTalk bridge later.
+Run it with Flue after installing Flue dependencies for your environment. The root `package.json` contains the Flue scripts and dependencies because Flue discovers `.flue/` from the project root.
+
+```bash
+npm install
+npm run flue:build
+OPENAI_API_KEY=sk-... npm run flue:start
+```
+
+The Flue server exposes:
+
+```text
+POST /agents/npc-assistant/:id
+```
+
+The core modules in `src/npc/` can be reused by a web server, Dify bridge, or DingTalk bridge later.
