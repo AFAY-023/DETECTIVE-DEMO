@@ -1,0 +1,19 @@
+{
+  "name": "detective-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:npc": "node --test npc-agent/tests/*.test.mjs",
+    "npc:dev": "node npc-agent/scripts/dev-server.mjs",
+    "flue:build": "flue build --target node",
+    "flue:start": "node dist/server.mjs"
+  },
+  "dependencies": {
+    "@flue/sdk": "latest",
+    "valibot": "latest"
+  },
+  "devDependencies": {
+    "@flue/cli": "latest"
+  }
+}
