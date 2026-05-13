@@ -1,5 +1,7 @@
 .env
 node_modules/
 dist/
+.tools/
+.npm-cache/
 .superpowers/
 Strange Pictures *
