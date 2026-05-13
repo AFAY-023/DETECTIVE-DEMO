@@ -77,7 +77,7 @@ Run it with Flue after installing Flue dependencies for your environment. The ro
 ```bash
 npm install
 npm run flue:build
-OPENAI_API_KEY=sk-... npm run flue:start
+npm run flue:start
 ```
 
 The Flue server exposes:

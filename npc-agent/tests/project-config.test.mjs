@@ -10,7 +10,7 @@ test("root package config includes Flue runtime dependencies and scripts", async
   assert.equal(pkg.dependencies.valibot, "latest");
   assert.equal(pkg.devDependencies["@flue/cli"], "latest");
   assert.equal(pkg.scripts["flue:build"], "flue build --target node");
-  assert.equal(pkg.scripts["flue:start"], "node dist/server.mjs");
+  assert.equal(pkg.scripts["flue:start"], "node --env-file=.env dist/server.mjs");
 });
 
 test("root env example and gitignore protect local secrets and artifacts", async () => {
@@ -21,6 +21,7 @@ test("root env example and gitignore protect local secrets and artifacts", async
   assert.match(envExample, /MODEL=openai\/gpt-5-mini/);
   assert.match(gitignore, /^\.env$/m);
   assert.match(gitignore, /^node_modules\/$/m);
+  assert.match(gitignore, /^logs\/$/m);
   assert.match(gitignore, /^\.superpowers\/$/m);
   assert.match(gitignore, /^Strange Pictures \*/m);
 });
