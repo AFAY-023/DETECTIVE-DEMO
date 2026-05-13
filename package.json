@@ -7,7 +7,7 @@
     "test:npc": "node --test npc-agent/tests/*.test.mjs",
     "npc:dev": "node npc-agent/scripts/dev-server.mjs",
     "flue:build": "flue build --target node",
-    "flue:start": "node dist/server.mjs"
+    "flue:start": "node --env-file=.env dist/server.mjs"
   },
   "dependencies": {
     "@flue/sdk": "latest",
